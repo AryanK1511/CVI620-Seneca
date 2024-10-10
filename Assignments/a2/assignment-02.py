@@ -16,8 +16,6 @@ def make_grid(caption, img1, img2, img3, img4):
     horizontal_resized_stacked_1 = np.hstack(
         (vertical_stacked_resized_images_1, vertical_stacked_resized_images_2)
     )
-
-    # Step 5: Display ans save the result
     cv.imshow(caption, horizontal_resized_stacked_1)
     cv.imwrite(f"output_images/{caption}.png", horizontal_resized_stacked_1)
 
@@ -96,21 +94,17 @@ TRANSFORMATION FUNCTIONS
 
 
 def make_watercolored_image(image):
+    # STEP 1: Resize and Preprocess the image
     image_dimensions = (320, 400)
     image = cv.resize(image, image_dimensions)
 
-    # Step 1: Apply Median Blur
-    # Reduced iterations to preserve more detail
+    # Step 2: Removing impurities from image and apply Smoothing Using Edge-Preserving Filter
     clear_image = applyMedianBlur(base_image=image, kernel_size=3, iterations=1)
-
-    # Step 2: Apply Edge-Preserving Filter
-    # Adjusted parameters to maintain more structure
     image_edge_preserve_filter = cv.edgePreservingFilter(
         clear_image, sigma_s=45, sigma_r=0.3
     )
 
-    # Step 3: Apply Bilateral Filter
-    # Fine-tuned parameters for a balance between smoothing and detail preservation
+    # Step 3: Combine the Effects to Create a Watercolor Look
     bilateral_filter_image = applyBilateralFilter(
         image_edge_preserve_filter,
         diameter=7,
@@ -127,8 +121,7 @@ def make_watercolored_image(image):
         iterations=1,
     )
 
-    # Step 4: Apply Gaussian Blur
-    # Kept light blur for final smoothing
+    # Step 4: Tune the Art
     kernel_size = (3, 3)
     standard_deviation_in_x_y = 0.8
     gaussian_mask = cv.GaussianBlur(
@@ -160,6 +153,7 @@ watercolored_with_names = [
     add_image_name(watercolored_resized[i], image_names[i]) for i in range(4)
 ]
 
+# Step 5: Display and Save the Result:
 make_grid("Original Images", *original_with_names)
 make_grid("Watercolored Images", *watercolored_with_names)
 
