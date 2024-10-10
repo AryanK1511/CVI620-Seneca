@@ -17,7 +17,7 @@ def make_grid(caption, img1, img2, img3, img4):
         (vertical_stacked_resized_images_1, vertical_stacked_resized_images_2)
     )
     cv.imshow(caption, horizontal_resized_stacked_1)
-    cv.imwrite(f"output_images/{caption}.png", horizontal_resized_stacked_1)
+    return horizontal_resized_stacked_1
 
 
 def add_image_name(image, image_name):
@@ -154,8 +154,15 @@ watercolored_with_names = [
 ]
 
 # Step 5: Display and Save the Result:
-make_grid("Original Images", *original_with_names)
-make_grid("Watercolored Images", *watercolored_with_names)
+original_grid = make_grid("Original Images", *original_with_names)
+watercolored_grid = make_grid("Watercolored Images", *watercolored_with_names)
+
+if not os.path.exists("output_images/"):
+    os.mkdir("output_images")
+
+cv.imwrite("output_images/original.png", original_grid)
+cv.imwrite("output_images/Watercolored.png", watercolored_grid)
+print("Successfully saved images in 'output_images' directory")
 
 cv.waitKey(0)
 cv.destroyAllWindows()
