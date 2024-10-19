@@ -1,183 +1,352 @@
-# CVI Midterm
+# CVI620 Midterm Exam - Final Report
 
-### **Part A: Image Acquisition and Preprocessing**
+- **Name:** Aryan Khurana
+- **Student ID:** 145282216
 
-#### **Task 1: Acquiring Sample Images**
+## Introduction
 
-**Code:**
+Edge detection is a fundamental technique in computer vision that identifies boundaries within an image where significant changes in pixel intensity occur. These boundaries often represent important features such as object contours, texture changes, or depth discontinuities.
 
-```python
-import cv2
-import matplotlib.pyplot as plt
+Edge detection is crucial in various applications including:
 
-# Load an image
-image = cv2.imread('sample_image.jpg')
+- Object detection and recognition
+- Image segmentation
+- Feature extraction
+- Medical image processing
+- Industrial quality control
+- Autonomous vehicle navigation
 
-# Display using OpenCV
-cv2.imshow('Original Image - OpenCV', image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+In this project, I will be walking you through three edge detection techniques, **Sobel**, **Laplacian**, and **Canny**.
 
-# Display using Matplotlib
-plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-plt.title('Original Image - Matplotlib')
-plt.show()
-```
+## Methods and Step by Step Process
 
-**Deliverable:** You will need to submit original images and highlight different types of edges in those images, such as sharp, soft, and complex.
+This project is divided into 3 major steps:
 
-#### **Task 2: Grayscale Conversion**
+1. **Image Acquisition and Preprocessing**
+2. **Edge Detection Techniques**
+3. **Performance Analysis and Optimization**
 
-**Code:**
+Let us go through all of them and understand edge detection in detail.
 
-```python
-# Convert the image to grayscale
-gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+## Part A: Image Acquisition and Preprocessing
 
-# Display the grayscale image
-plt.imshow(gray_image, cmap='gray')
-plt.title('Grayscale Image')
-plt.show()
-```
+### Task 1: Acquiring Sample Images
 
-**Why Grayscale?** Grayscale simplifies edge detection by reducing the computational complexity and focusing on intensity changes instead of color.
-
-#### **Task 3: Noise Reduction Using Smoothing**
-
-**Code:**
+- Lets start off by loading and displaying a series of images from specified file paths stored in the `image_hashmap` dictionary.
+- Each key in the dictionary represents a window name for displaying the corresponding image. T
+- The code iterates through the items in the dictionary, reading each image using OpenCV's `cv.imread()` function. Successfully loaded images are appended to the `images` list, and each image is displayed in a separate window with its designated name using `cv.imshow()`.
 
 ```python
-# Apply Gaussian Blur for noise reduction
-gaussian_blur = cv2.GaussianBlur(gray_image, (5, 5), 0)
+import cv2 as cv  # Import the OpenCV library for image processing
+import numpy as np  # Import NumPy for numerical operations (not used in this snippet)
 
-# Display the original and blurred image for comparison
-plt.subplot(1, 2, 1)
-plt.imshow(gray_image, cmap='gray')
-plt.title('Original Grayscale')
+# Dictionary to map window names to their corresponding image file paths
+image_hashmap = {
+    "Geometric Shapes - OpenCV": "images/geometric_shapes.jpg",
+    "Industrial Objects - OpenCV": "images/industrial_objects.jpg",
+    "Natural Scenes - OpenCV": "images/natural_scenes.jpg",
+}
 
-plt.subplot(1, 2, 2)
-plt.imshow(gaussian_blur, cmap='gray')
-plt.title('Gaussian Blurred')
-plt.show()
+images = []  # List to store successfully loaded images
+
+# Iterate through the dictionary to load and display each image
+for window_name, image_path in image_hashmap.items():
+    # Read the image from the specified file path
+    image = cv.imread(image_path)
+
+    # Check if the image was loaded successfully
+    if image is None:
+        print(f"Error: Unable to load image from {image_path}")  # Print an error message if loading fails
+        continue  # Skip to the next iteration if the image is not loaded
+
+    images.append(image)  # Add the successfully loaded image to the list
+    cv.imshow(window_name, image)  # Display the image in a window with the specified name
+
+# Wait indefinitely for a key press
+cv.waitKey(0)
+
+# Close all open image windows
+cv.destroyAllWindows()
 ```
 
-**Deliverable:** Submit the code, and display images before and after applying smoothing filters like Gaussian Blur or Median Filter.
+![img](https://drive.google.com/thumbnail?id=1fP2hQUyfJz-37vOPlPnY2wsTtibosb98&sz=w1000)
 
----
+### Task 2: Grayscale Conversion
 
-### **Part B: Edge Detection Techniques**
-
-#### **Task 4: Sobel Edge Detection**
-
-**Code:**
+Next, we will convert all our images to grayscale and will store them in the `gray_images` list.
 
 ```python
-# Sobel Edge Detection in X and Y direction
-sobel_x = cv2.Sobel(gaussian_blur, cv2.CV_64F, 1, 0, ksize=5)
-sobel_y = cv2.Sobel(gaussian_blur, cv2.CV_64F, 0, 1, ksize=5)
+gray_images = []  # List to store the grayscale versions of the images
 
-# Combine Sobel X and Y
-sobel_combined = cv2.magnitude(sobel_x, sobel_y)
+# Iterate through each image in the 'images' list (loaded from the previous code)
+for image in images:
+    # Convert the current image from BGR (color) to grayscale
+    gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-# Display Sobel result
-plt.imshow(sobel_combined, cmap='gray')
-plt.title('Sobel Edge Detection')
-plt.show()
+    # Append the grayscale image to the 'gray_images' list
+    gray_images.append(gray_image)
 ```
 
-**Deliverable:** Provide the code and display the edge-detected image using Sobel, explaining how it calculates gradients in both X and Y directions.
+**Grayscale conversion simplifies edge detection by:**
 
-#### **Task 5: Laplacian Edge Detection**
+- Reducing image complexity to a single intensity channel
+- Focusing on intensity changes rather than color variations
+- Improving computational efficiency
+- Reducing noise in the edge detection process
 
-**Code:**
+![img](https://drive.google.com/thumbnail?id=1kVmdJIru_c60Z3CJHxsgehDPL1cseBlP&sz=w1000)
+
+### Task 3: Noise Reduction Using Smoothing
+
+- Smoothing an image, or blurring, helps reduce noise from sensor limitations or poor lighting, resulting in a cleaner representation of the scene.
+- By minimizing unwanted variations, smoothing allows algorithms to focus on significant features while enhancing edge detection, making it easier to identify important transitions in intensity.
+- It also improves image segmentation by clarifying distinctions between regions and enhances visual appeal by softening harsh edges.
 
 ```python
-# Laplacian Edge Detection
-laplacian = cv2.Laplacian(gaussian_blur, cv2.CV_64F)
+blurred_images = []  # List to store the Gaussian blurred versions of the grayscale images
 
-# Display Laplacian result
-plt.imshow(laplacian, cmap='gray')
-plt.title('Laplacian Edge Detection')
-plt.show()
+# Iterate through each grayscale image in the 'gray_images' list
+for i in range(len(gray_images)):
+    # Apply Gaussian blur to the current grayscale image with a kernel size of (5, 5)
+    gaussian_blur = cv.GaussianBlur(gray_images[i], (5, 5), 0)
+    blurred_images.append(gaussian_blur)  # Store the blurred image in the list
+
+    # Convert the current grayscale image back to a 3-channel BGR image
+    gray_image_3channel = cv.cvtColor(gray_images[i], cv.COLOR_GRAY2BGR)
+
+    # Convert the blurred image to a 3-channel BGR image
+    gaussian_blur_3channel = cv.cvtColor(gaussian_blur, cv.COLOR_GRAY2BGR)
+
+    # Concatenate the original image, grayscale image, and Gaussian blurred image horizontally
+    concatenated_image = cv.hconcat(
+        [images[i], gray_image_3channel, gaussian_blur_3channel]
+    )
+
+    # Display the concatenated image in a window with a descriptive title
+    cv.imshow(
+        f"Original vs Grayscale vs Gaussian Blurred - Image {i + 1}",
+        concatenated_image
+    )
+
+# Wait indefinitely for a key press
+cv.waitKey(0)
+
+# Close all open image windows
+cv.destroyAllWindows()
 ```
 
-**Deliverable:** Provide the code and display the Laplacian-detected edges.
+**Gaussian blur** smooths the image to reduce noise while preserving edge information, using a 5x5 kernel size.
 
-#### **Task 7: Canny Edge Detection**
+Here is a comparison between the original image, grayscale image and image after applying gaussian blur.
 
-**Code:**
+![img](https://drive.google.com/thumbnail?id=1lzZf-7f7EHpkKC_-fFhPOFvVWZGJDS4f&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1PuoQyFcQlJxbB_uDycQucZUbquvNZZIk&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1NiQwO28NJfaF3l0Ws6JQGgp0UvpBKAxW&sz=w1000)
+
+## Part A: Edge Detection Techniques
+
+### Task 4: Sobel Edge Detection
+
+- The primary goal of the Sobel operator is to find edges in an image. Edges are the boundaries where there are significant changes in brightness or color.
+- The Sobel operator uses two filters (or kernels) that move across the image. One filter detects horizontal edges (left to right), while the other detects vertical edges (top to bottom). As these filters are applied to the image, they calculate how much the pixel values change in both directions.
+- After applying both filters, the Sobel operator combines the results to determine the overall edge strength at each pixel. This helps highlight areas where there are significant transitions in color or brightness.
+- The output of the Sobel operator is an image where the edges are more prominent. Typically, brighter areas in the output represent strong edges, while darker areas indicate little or no edge presence.
 
 ```python
-# Canny Edge Detection
-canny_edges = cv2.Canny(gaussian_blur, 100, 200)
+# Define a list of kernel sizes to use for the Sobel operator
+kernel_sizes = [3, 5, 7]
+sobel_images = []  # List to store the Sobel edge-detected images
 
-# Display Canny result
-plt.imshow(canny_edges, cmap='gray')
-plt.title('Canny Edge Detection')
-plt.show()
+# Iterate through each blurred image in the 'blurred_images' list
+for blurred_image in blurred_images:
+    sobel_images = []  # Reset the list for each blurred image
+
+    # Iterate through each kernel size defined in 'kernel_sizes'
+    for ksize in kernel_sizes:
+        # Apply the Sobel operator in the x direction to detect horizontal edges
+        sobel_x = cv.Sobel(blurred_image, cv.CV_64F, 1, 0, ksize=ksize)
+
+        # Apply the Sobel operator in the y direction to detect vertical edges
+        sobel_y = cv.Sobel(blurred_image, cv.CV_64F, 0, 1, ksize=ksize)
+
+        # Combine the absolute values of the Sobel x and y results to create a single edge image
+        sobel_combined = cv.addWeighted(np.abs(sobel_x), 0.5, np.abs(sobel_y), 0.5, 0)
+
+        # Convert the combined image to an unsigned 8-bit integer format
+        sobel_combined = np.uint8(sobel_combined)
+
+        # Create a window name for displaying the Sobel edge detection results
+        window_name = f"Sobel Edge Detection - Kernel Size: {ksize}"
+
+        # Display the Sobel edge-detected image in a window
+        cv.imshow(window_name, sobel_combined)
+
+    # Append the last Sobel combined image for the current blurred image to the list
+    sobel_images.append(sobel_combined)
+
+cv.waitKey(0)
+cv.destroyAllWindows()
 ```
 
-**Deliverable:** Submit the code and display the Canny edge-detected image. Experiment with different thresholds and explain why Canny is robust compared to Sobel and Laplacian.
+#### Results of Experimenting with Different Kernel Sizes
 
----
+When you experiment with different kernel sizes (3, 5, and 7) using the Sobel operator, you can observe different effects:
 
-### **Part C: Performance Analysis and Optimization**
+1. **Smaller Kernel Sizes (e.g., 3)**:
 
-#### **Task 8: Comparing Edge Detection Techniques**
+   - Smaller kernels capture fine details and edges more precisely.
+   - The output image shows sharper edges, but it may also highlight noise, making some unwanted details more visible.
 
-**Code for Comparison:**
+2. **Medium Kernel Sizes (e.g., 5)**:
+
+   - This size offers a balance between detail and noise reduction.
+   - The edges are well-defined, and the image looks cleaner, as some noise is smoothed out without losing too much detail.
+
+3. **Larger Kernel Sizes (e.g., 7)**:
+
+   - Larger kernels smooth the image more significantly, reducing noise further.
+   - While the important edges are still visible, finer details may be lost. The output appears less noisy but may miss some smaller edges. In the example below, you will see how we don't even see edges properly anymore when we go for a `7x7` Kernel size.
+
+#### Comparison (`3x3` vs `5x5` vs `7x7`)
+
+![img](https://drive.google.com/thumbnail?id=1e81l2pkdexlMAbWmTmXUkQf-yIIRxQoQ&sz=w1000)
+
+By changing the kernel size in the Sobel operator, you can influence how edges are detected in an image. Smaller kernels provide more detail, while larger kernels offer a smoother appearance, which can be beneficial in various image processing applications depending on the desired outcome.
+
+### Task 5: Laplacian Edge Detection
+
+The **Laplacian edge detection** technique is a method used to find edges in images. It works by looking for places where there’s a sudden change in color or brightness.
+
+- The Laplacian operator scans through the image and looks for areas where the colors change quickly. For example, where a bright object meets a dark background, there’s a clear edge.
+- When the Laplacian operator identifies these sudden changes, it emphasizes them. The result is a new image where edges are shown very clearly, making it easier to see the boundaries of different objects in the picture.
+- The new image created by the Laplacian operator shows bright areas where the edges are, while the rest of the image appears darker. This contrast helps to visualize the shapes and outlines within the image effectively.
 
 ```python
-# Display comparison of Sobel, Laplacian, and Canny edge detection
-plt.figure(figsize=(10, 7))
+laplacian_images = []  # Initialize a list to store images with Laplacian edge detection.
 
-# Sobel
-plt.subplot(1, 3, 1)
-plt.imshow(sobel_combined, cmap='gray')
-plt.title('Sobel')
+# Loop through each blurred image and its index.
+for index, blurred_image in enumerate(blurred_images):
+    # Apply the Laplacian operator to detect edges in the blurred image.
+    laplacian = cv.Laplacian(blurred_image, cv.CV_64F)
 
-# Laplacian
-plt.subplot(1, 3, 2)
-plt.imshow(laplacian, cmap='gray')
-plt.title('Laplacian')
+    # Take the absolute value of the Laplacian result to ensure all edge values are positive.
+    laplacian = np.abs(laplacian)
 
-# Canny
-plt.subplot(1, 3, 3)
-plt.imshow(canny_edges, cmap='gray')
-plt.title('Canny')
+    # Convert the Laplacian result back to an 8-bit unsigned integer format for displaying.
+    laplacian = np.uint8(laplacian)
 
-plt.show()
+    # Append the processed Laplacian image to the list.
+    laplacian_images.append(laplacian)
+
+    # Display the Laplacian edge-detected image in a window.
+    cv.imshow(f"Laplacian Edge Detection - Image {index + 1}", laplacian)
+
+cv.waitKey(0)
+cv.destroyAllWindows()
 ```
 
-**Deliverable:**
+![img](https://drive.google.com/thumbnail?id=1Y4touS8oi-P3B3aR8SUwo9BUN9fElhtQ&sz=w1000)
 
-- Create a comparison report, including edge sharpness, accuracy, noise sensitivity, and computational efficiency.
-- Provide visual examples and summarize the pros and cons of each method in a table.
+#### Differences from Gradient-Based Methods (Like Sobel)
 
----
+1. **Focus on Changes**:
 
-### **Final Report Outline**
+   - The **Sobel operator** focuses on how colors change in a specific direction, like left to right or up and down. It helps in understanding where lines or edges are located.
+   - The **Laplacian operator**, on the other hand, looks for any rapid change in color, regardless of direction. It detects edges from all angles, giving a more general view of where the edges are.
 
-1. **Introduction**  
-   An overview of edge detection and its applications in image processing and computer vision.
+2. **Handling Noise**:
 
-2. **Methods**  
-   Detailed explanation of Sobel, Laplacian, and Canny edge detection with code snippets.
+   - The Sobel operator is generally better at ignoring small disturbances or noise in the image, which helps in producing cleaner edges.
+   - The Laplacian can be more sensitive to noise. It might highlight not just the edges but also random changes, which can lead to some unnecessary details appearing in the output.
 
-3. **Results**  
-   Present edge-detected images using each method, along with an analysis of the performance.
+3. **Type of Edges Detected**:
 
-4. **Challenges**  
-   Discuss any challenges faced during implementation (e.g., handling noise, tuning thresholds) and how they were addressed.
+   - The Sobel operator shows lines and boundaries more clearly by emphasizing the direction of edges, making it ideal for detecting straight lines.
+   - The Laplacian can show all significant edges, including curves and corners, making it useful for more complex shapes.
 
-5. **Conclusion**  
-   Summary of findings, comparison between methods, and suggestions for future improvements in edge detection.
+4. **Combined Use**:
+   - Often, both methods are used together. The Sobel operator can first identify where the main edges are, and then the Laplacian can refine those edges by emphasizing additional details.
 
----
+#### Sobel (`7x7` Kernel Size) v/s Laplacian
 
-### **Grading Criteria Breakdown**
+![img](https://drive.google.com/thumbnail?id=1C6AEooeyCUDJafQio1amksgrFqed5C7p&sz=w1000)
 
-- **Code Functionality:** Make sure the edge detection algorithms perform correctly and efficiently.
-- **Report Quality:** Clear explanations of each method and result with well-documented code.
-- **Creativity and Problem-Solving:** Explore different parameters and optimizations in edge detection techniques.
-- **Presentation:** Ensure high-quality visuals and structured content in the final report.
+#### c) Canny Edge Detection
+
+```python
+thresholds = [(50, 150), (100, 200), (150, 250)]
+for low_thresh, high_thresh in thresholds:
+    canny_edges = cv.Canny(blurred_image, low_thresh, high_thresh)
+```
+
+The Canny algorithm:
+
+- Uses double thresholding to detect strong and weak edges
+- Implements hysteresis to connect edge segments
+- Provides more precise edge detection compared to Sobel and Laplacian
+
+## Results
+
+### Comparative Analysis
+
+1. **Sobel Edge Detection**
+
+   - Effectively detected strong edges in different directions
+   - Performance varied with kernel size:
+     - 3x3: Captured fine details but more sensitive to noise
+     - 5x5: Balanced detail and noise reduction
+     - 7x7: Smoother edges but lost some fine details
+
+2. **Laplacian Edge Detection**
+
+   - Detected edges regardless of orientation
+   - More sensitive to noise compared to Sobel
+   - Produced thinner edges but with more false positives
+
+3. **Canny Edge Detection**
+   - Provided the most complete and clean edge maps
+   - Different threshold combinations affected results:
+     - (50, 150): Detected more edges but included some noise
+     - (100, 200): Balanced edge detection
+     - (150, 250): Focused on strongest edges only
+
+## Challenges
+
+1. **Noise Handling**
+
+   - Challenge: Initial edge detection attempts produced noisy results
+   - Solution: Implemented Gaussian blur preprocessing with a 5x5 kernel
+   - Impact: Significantly reduced false edge detection while preserving important features
+
+2. **Parameter Tuning**
+
+   - Challenge: Different images required different parameters for optimal results
+   - Solution: Implemented multiple parameter combinations (kernel sizes, thresholds)
+   - Impact: Allowed for comparison and selection of best parameters for each image type
+
+3. **Image Size Consistency**
+   - Challenge: Comparison of different methods required consistent image sizes
+   - Solution: Implemented resize operations when concatenating images
+   - Impact: Enabled direct visual comparison of different edge detection methods
+
+## Conclusion
+
+### Key Findings
+
+1. Canny edge detection provided the most reliable results across different image types
+2. Preprocessing steps (grayscale conversion and Gaussian blur) were crucial for good results
+3. Parameter selection significantly impacts edge detection quality
+
+### Future Improvements
+
+1. Implement adaptive parameter selection based on image characteristics
+2. Explore deep learning-based edge detection methods
+3. Develop automated evaluation metrics for edge detection quality
+4. Investigate multi-scale edge detection approaches
+
+### Recommendations
+
+1. Use Canny edge detection for general-purpose edge detection tasks
+2. Apply appropriate preprocessing steps before edge detection
+3. Consider the specific requirements of the application when selecting parameters
+4. Implement multiple edge detection methods for comprehensive analysis
