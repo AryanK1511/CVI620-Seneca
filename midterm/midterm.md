@@ -389,11 +389,11 @@ While Sobel and Laplacian are quicker and simpler, Canny offers superior accurac
 
 #### Pros and Cons
 
-| Method                   | Pros                                                                     | Cons                                                                        |
-| ------------------------ | ------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| **Sobel Operator**       | - Fast and simple<br>- Effective for basic edge detection                | - Sensitive to noise<br>- May produce thicker edges                         |
-| **Laplacian Operator**   | - Good for contour detection<br>- Can detect edges in various directions | - More prone to noise<br>- Thicker edges can obscure details                |
-| **Canny Edge Detection** | - High accuracy and sharp edges<br>- Robust against noise                | - More computationally intensive<br>- Requires careful tuning of thresholds |
+| Method                   | Pros                                                                    | Cons                                                                       |
+| ------------------------ | ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| **Sobel Operator**       | - Fast and simple and Effective for basic edge detection                | - Sensitive to noise and May produce thicker edges                         |
+| **Laplacian Operator**   | - Good for contour detection and Can detect edges in various directions | - More prone to noise and Thicker edges can obscure details                |
+| **Canny Edge Detection** | - High accuracy and sharp edges and Robust against noise                | - More computationally intensive and Requires careful tuning of thresholds |
 
 #### A short observation summary
 
@@ -412,7 +412,7 @@ While Sobel and Laplacian are quicker and simpler, Canny offers superior accurac
    - Produced thinner edges but with more false positives
 
 3. **Canny Edge Detection**
-   - Provided the most complete and clean edge maps
+4. - Provided the most complete and clean edge maps
    - Different threshold combinations affected results:
      - (50, 150): Detected more edges but included some noise
      - (100, 200): Balanced edge detection
