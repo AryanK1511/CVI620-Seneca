@@ -69,7 +69,7 @@ cv.waitKey(0)
 cv.destroyAllWindows()
 ```
 
-![img](https://drive.google.com/thumbnail?id=1fP2hQUyfJz-37vOPlPnY2wsTtibosb98&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1S0RWehydZDr2RAtXP7ZcsgJt4a8KyJeg&sz=w1000)
 
 ### Task 2: Grayscale Conversion
 
@@ -94,7 +94,7 @@ for image in images:
 - Improving computational efficiency
 - Reducing noise in the edge detection process
 
-![img](https://drive.google.com/thumbnail?id=1kVmdJIru_c60Z3CJHxsgehDPL1cseBlP&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1c1TtuU9LV44avLJq_l0Gy6LRSTKkAi8h&sz=w1000)
 
 ### Task 3: Noise Reduction Using Smoothing
 
@@ -139,9 +139,9 @@ cv.destroyAllWindows()
 
 Here is a comparison between the original image, grayscale image and image after applying gaussian blur.
 
-![img](https://drive.google.com/thumbnail?id=1lzZf-7f7EHpkKC_-fFhPOFvVWZGJDS4f&sz=w1000)
-![img](https://drive.google.com/thumbnail?id=1PuoQyFcQlJxbB_uDycQucZUbquvNZZIk&sz=w1000)
-![img](https://drive.google.com/thumbnail?id=1NiQwO28NJfaF3l0Ws6JQGgp0UvpBKAxW&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1fIlAmoAGJetEdsBXce-T7_OF69N1hWyr&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1qk6n-PYfDQErC5GlkFxseM67KGHQm8tT&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1r6jMfItyQy4xnNdR6fGyhvVILUYA3OG7&sz=w1000)
 
 ## Part A: Edge Detection Techniques
 
@@ -209,7 +209,7 @@ When you experiment with different kernel sizes (3, 5, and 7) using the Sobel op
 
 #### Comparison (`3x3` vs `5x5` vs `7x7`)
 
-![img](https://drive.google.com/thumbnail?id=1e81l2pkdexlMAbWmTmXUkQf-yIIRxQoQ&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1jsXluBdSjGeYjxhCw5HfvwjJ4WB9ciEe&sz=w1000)
 
 By changing the kernel size in the Sobel operator, you can influence how edges are detected in an image. Smaller kernels provide more detail, while larger kernels offer a smoother appearance, which can be beneficial in various image processing applications depending on the desired outcome.
 
@@ -245,7 +245,7 @@ cv.waitKey(0)
 cv.destroyAllWindows()
 ```
 
-![img](https://drive.google.com/thumbnail?id=1Y4touS8oi-P3B3aR8SUwo9BUN9fElhtQ&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=124D2vKvUTKcn-aMYHNtm7n-sRR4Vm7hE&sz=w1000)
 
 #### Differences from Gradient-Based Methods (Like Sobel)
 
@@ -269,25 +269,133 @@ cv.destroyAllWindows()
 
 #### Sobel (`7x7` Kernel Size) v/s Laplacian
 
-![img](https://drive.google.com/thumbnail?id=1C6AEooeyCUDJafQio1amksgrFqed5C7p&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1EjvDK4Dn97Mvg31snaCdiignmFIpYxe4&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1N0woWi_Kq1LgDsfv4nDDkEcjCwjc-ULZ&sz=w1000)
+![img](https://drive.google.com/thumbnail?id=1t0jmK9JKGEaZ8jjiUZ06I_3fN3fH_g3g&sz=w1000)
 
-#### c) Canny Edge Detection
+### Task 7: Canny Edge Detection
+
+- Canny edge detection algorithm begins by applying a Gaussian filter to smooth the image, which helps reduce noise that can interfere with edge detection.
+- Following this, it calculates the intensity gradient using methods like the Sobel operator, highlighting areas where the intensity changes rapidly, which indicates the presence of edges.
+- The next step is non-maximum suppression, where the algorithm thins out detected edges to a single pixel width, enhancing the clarity of the edges.
+- This combination of techniques allows Canny edge detection to excel in identifying complex and curved edges while maintaining sensitivity to significant features.
 
 ```python
+# Initialize a list to store images with Canny edge detection results.
+canny_images = []
+
+# Define a list of threshold pairs for Canny edge detection.
 thresholds = [(50, 150), (100, 200), (150, 250)]
-for low_thresh, high_thresh in thresholds:
-    canny_edges = cv.Canny(blurred_image, low_thresh, high_thresh)
+
+# Loop through each blurred image and its index.
+for index, blurred_image in enumerate(blurred_images):
+    # Loop through each threshold pair.
+    for low_thresh, high_thresh in thresholds:
+        # Apply Canny edge detection using the current threshold pair.
+        canny_edges = cv.Canny(blurred_image, low_thresh, high_thresh)
+
+        # Append the Canny edge-detected image to the list if the low threshold is 50.
+        if low_thresh == 50:
+            canny_images.append(canny_edges)
+
+        # Display the Canny edge-detected image with a window name indicating the image and thresholds used.
+        cv.imshow(f"Canny Edge Detection - Image {index + 1} (Thresh: {low_thresh}, {high_thresh})", canny_edges)
+
+# Wait for a key press to close the displayed windows.
+cv.waitKey(0)
+cv.destroyAllWindows()
+
 ```
 
-The Canny algorithm:
+#### Different Thresholds
 
-- Uses double thresholding to detect strong and weak edges
-- Implements hysteresis to connect edge segments
-- Provides more precise edge detection compared to Sobel and Laplacian
+- The **low threshold** is used to identify weak edges. Any pixel with a gradient intensity below this threshold is discarded and not considered part of an edge.
+- The **high threshold** is set to identify strong edges. Pixels with gradient values above this threshold are classified as strong edges, indicating clear and significant transitions in intensity. These strong edges are guaranteed to be retained in the final edge-detected image.
+- Pixels that fall between the low and high thresholds are classified as weak edges. Their status is conditional; they are retained only if they are connected to strong edges. This means that weak edges can be influential in the final output if they help form a continuous edge along with strong edges.
 
-## Results
+#### Results of Experimenting with Different Thresholds
 
-### Comparative Analysis
+- **Lower Thresholds (like 50)**: More inclusive, capturing more detail but potentially including noise.
+- **Medium Thresholds (like 100)**: Strikes a balance, filtering some noise while still retaining a reasonable amount of detail.
+- **Higher Thresholds (like 150)**: Focuses on strong, significant edges, potentially losing finer details but producing cleaner results.
+
+Here is the output showing an image with different thresholds:
+
+![img](https://drive.google.com/thumbnail?id=19q2KBwuW_ZoiEAJETa_7ZcH8W4WN0Lft&sz=w1000)
+
+#### Comparison of Edge Detection Techniques based on performance and accuracy
+
+1. **Sobel Operator**:
+
+   - **Performance**: Generally faster than more complex techniques, as it involves simple convolution operations.
+   - **Accuracy**: Good for detecting edges in images with clear transitions but can be sensitive to noise, which may lead to false edges in cluttered images.
+
+2. **Laplacian Operator**:
+
+   - **Performance**: Slightly slower than Sobel due to second-order derivative calculations. It is still efficient for real-time applications.
+   - **Accuracy**: Effective in detecting edges and contours, but can be more prone to noise. It may produce thicker edges compared to Sobel, which can obscure fine details.
+
+3. **Canny Edge Detection**:
+   - **Performance**: More computationally intensive due to multiple steps (smoothing, gradient calculation, non-maximum suppression, and hysteresis). However, it is efficient for its accuracy in edge detection.
+   - **Accuracy**: Known for high accuracy in detecting edges with better control over noise and false edges. It is less sensitive to noise compared to Sobel and Laplacian, making it ideal for complex images.
+
+While Sobel and Laplacian are quicker and simpler, Canny offers superior accuracy and noise management, making it a preferred choice for more detailed and intricate edge detection tasks. The trade-off often comes down to the specific requirements of the application, such as speed versus the need for precision in edge identification.
+
+| Feature                      | Sobel Operator                                                                        | Laplacian Operator                                                               | Canny Edge Detection                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Edge Sharpness**           | Moderate; detects edges well but can produce thicker edges due to gradient averaging. | Moderate to high; produces sharp edges but may include more noise.               | High; sharp and clean edges due to effective noise reduction and non-maximum suppression.                |
+| **Accuracy**                 | Good for clear transitions; can miss fine edges in noisy images.                      | Effective for contour detection; may confuse noise with edges.                   | Very high; excels in detecting actual edges while minimizing false positives.                            |
+| **Noise Sensitivity**        | Sensitive to noise; noisy images can lead to false edges.                             | More prone to noise; may detect noise as edges, resulting in less clean outputs. | Less sensitive; effectively reduces noise through smoothing and hysteresis.                              |
+| **Computational Efficiency** | Fast; involves simple convolution operations.                                         | Efficient but slightly slower than Sobel due to second-order derivatives.        | More computationally intensive due to multiple processing steps (smoothing, gradient calculation, etc.). |
+
+## Part C: Performance Analysis and Optimization
+
+### Task 8: Comparing Edge Detection Techniques
+
+**Here are some images that compare edge detection results among Sobel, Laplacian, and Canny methods. The images are arranged from left to right, starting with the Sobel method.**
+
+#### IMAGE 01: Geometric Shapes
+
+![img](https://drive.google.com/thumbnail?id=1-uaV6LISiSMrUWrEW4S_h8-P8NAktBC8&sz=w1000)
+
+#### IMAGE 02: Industrial Objects
+
+![img](https://drive.google.com/thumbnail?id=1O1qf-4WLerDW5EiBcs0XPOHsPDs73ZwA&sz=w1000)
+
+#### IMAGE 03: Natural Scenes
+
+![img](https://drive.google.com/thumbnail?id=1D0PfCH-pTLXnsviWabMRVr-RxRffrmtC&sz=w1000)
+
+#### 1. Sobel Operator
+
+- The Sobel operator is effective for detecting edges in images with clear transitions.
+- It provides moderate edge sharpness, as it typically produces thicker edges due to the averaging of gradients.
+- While it is relatively fast and computationally efficient, the Sobel operator is sensitive to noise, which can lead to false edges in cluttered or noisy images.
+- Overall, it strikes a balance between performance and accuracy but may not be ideal for images with a lot of detail or noise.
+
+#### 2. Laplacian Operator
+
+- The Laplacian operator is known for its ability to detect contours effectively, producing sharp edges in many cases.
+- However, it can be more prone to noise, often detecting noise as edges, which results in less clean outputs.
+- While it operates efficiently, it can be slightly slower than the Sobel operator due to its reliance on second-order derivatives.
+- It offers good performance for contour detection but requires careful consideration in noisy environments.
+
+#### 3. Canny Edge Detection
+
+- Canny edge detection is renowned for its high accuracy and ability to produce sharp, clean edges.
+- It excels at minimizing false positives and is less sensitive to noise compared to the other two methods, making it highly effective for complex images.
+- However, Canny is more computationally intensive because it involves multiple steps.
+- Despite the higher computational cost, its superior performance in edge detection often justifies its use in applications where detail and accuracy are critical.
+
+#### Pros and Cons
+
+| Method                   | Pros                                                                     | Cons                                                                        |
+| ------------------------ | ------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| **Sobel Operator**       | - Fast and simple<br>- Effective for basic edge detection                | - Sensitive to noise<br>- May produce thicker edges                         |
+| **Laplacian Operator**   | - Good for contour detection<br>- Can detect edges in various directions | - More prone to noise<br>- Thicker edges can obscure details                |
+| **Canny Edge Detection** | - High accuracy and sharp edges<br>- Robust against noise                | - More computationally intensive<br>- Requires careful tuning of thresholds |
+
+#### A short observation summary
 
 1. **Sobel Edge Detection**
 
@@ -312,41 +420,29 @@ The Canny algorithm:
 
 ## Challenges
 
-1. **Noise Handling**
+The challenges in computer vision often involve selecting the perfect kernel size and other parameters for different types of functions.
 
-   - Challenge: Initial edge detection attempts produced noisy results
-   - Solution: Implemented Gaussian blur preprocessing with a 5x5 kernel
-   - Impact: Significantly reduced false edge detection while preserving important features
+This is because, in many cases, different parameters work for different images, and there is no "one-size-fits-all" approach when using OpenCV and convolutions. The only method that works for me is trial and error, along with reviewing documentation.
 
-2. **Parameter Tuning**
+For example, understanding how kernel size works can help you tune your parameters. If I know that a kernel size of 7 would be too large, I might test sizes between 3 and 5.
 
-   - Challenge: Different images required different parameters for optimal results
-   - Solution: Implemented multiple parameter combinations (kernel sizes, thresholds)
-   - Impact: Allowed for comparison and selection of best parameters for each image type
+**My usual workflow for tuning parameters is as follows:**
 
-3. **Image Size Consistency**
-   - Challenge: Comparison of different methods required consistent image sizes
-   - Solution: Implemented resize operations when concatenating images
-   - Impact: Enabled direct visual comparison of different edge detection methods
+1. Understand what the parameters do.
+2. Determine a reasonable range for the parameters.
+3. Test every value within that range.
 
 ## Conclusion
 
-### Key Findings
+### Findings
 
-1. Canny edge detection provided the most reliable results across different image types
-2. Preprocessing steps (grayscale conversion and Gaussian blur) were crucial for good results
-3. Parameter selection significantly impacts edge detection quality
+1. Canny edge detection provided the most reliable results across various image types.
+2. Preprocessing steps, such as grayscale conversion and Gaussian blur, were crucial for achieving good results.
+3. Parameter selection significantly impacts the quality of edge detection.
+4. In computer science, it is always necessary to consider trade-offs; for instance, while Canny may be the best method, we need to evaluate whether it’s worth the resources it requires.
 
 ### Future Improvements
 
-1. Implement adaptive parameter selection based on image characteristics
-2. Explore deep learning-based edge detection methods
-3. Develop automated evaluation metrics for edge detection quality
-4. Investigate multi-scale edge detection approaches
-
-### Recommendations
-
-1. Use Canny edge detection for general-purpose edge detection tasks
-2. Apply appropriate preprocessing steps before edge detection
-3. Consider the specific requirements of the application when selecting parameters
-4. Implement multiple edge detection methods for comprehensive analysis
+1. Implement adaptive parameter selection based on image characteristics. As mentioned earlier, there is no one-size-fits-all solution, so ideally, I should use different parameters for different images. Perhaps the hashmap initialized at the start could also include associated parameters along with the image path.
+2. Develop automated evaluation metrics for edge detection quality. Currently, we manually check which result looks best, which may not be the most efficient approach in an industry setting.
+3. Although we do not have a proper application right now, considering the specific requirements of an application when selecting parameters could be beneficial if we develop one in the future.
